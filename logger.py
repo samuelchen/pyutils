@@ -7,26 +7,12 @@ Created on 2014-5-29
 @author: Samuel
 '''
 import os
-import sys
 import logging
 import logging.config
 import traceback
-import setting
 
 TRACE = logging.NOTSET
 logging.addLevelName(TRACE, 'TRACE')
-
-formatter = logging.Formatter(
-                  fmt='[%(asctime)s] [%(process)d] [%(name)-8s] [%(levelname)-5s] - %(message)s',
-                  datefmt='%y-%m-%d %H:%M:%S')
-
-consoleHandler = logging.StreamHandler(stream=sys.stdout)
-consoleHandler.setFormatter(formatter)
-consoleHandler.setLevel(logging.NOTSET)
-
-fileHandler = logging.handlers.RotatingFileHandler(setting.log.file, 'a')
-fileHandler.setFormatter(formatter)
-fileHandler.setLevel(logging.INFO)
 
 class Logger(object):  
     ''' convinient log tools based on python standard logging system '''
@@ -38,14 +24,18 @@ class Logger(object):
     SKYBLUE = 6
     WHITE   = 7
 
-    def __init__(self):
-#         logConf = setting.log_conf
-#         if os.path.exists(logConf):
-#             logging.config.fileConfig(logConf)
+    def __init__(self, name='pyutils.logger'):
+        # logConf = conf
+        # if os.path.exists(logConf):
+        #     logging.config.fileConfig(logConf)
 
-        self.logger = logging.getLogger("leaf")
-        self.logger.addHandler(consoleHandler)
-        self.logger.addHandler(fileHandler)
+        self.logger = logging.getLogger(name)
+
+    def addHandler(self, handler):
+        self.logger.addHandler(handler)
+
+    def addFilter(self, filter):
+        self.logger.addFilter(filter)
 
     def _fix_posix(self, color, msg):
         return "\033[3%dm%s\033[0m" % (color, msg)
@@ -58,25 +48,51 @@ class Logger(object):
     else:
         fix = _fix_posix
         
-    def trace(self, msg, color = WHITE):
+    def _trace(self, msg, color = WHITE):
         self.logger.log(TRACE, self.fix(color, msg))
+
+    def trace(self, msg, *args, **kwargs):
+        self.logger.log(TRACE, self.fix(self.WHITE, msg), *args, **kwargs)
     
-    def debug(self, msg, color = GREEN):
+    def _debug(self, msg, color = GREEN):
         self.logger.debug(self.fix(color, msg))
 
-    def info(self, msg, color = SKYBLUE):
+    def debug(self, msg, *args, **kwargs):
+        self.logger.debug(self.fix(self.GREEN, msg), *args, **kwargs)
+
+    def _info(self, msg, color = SKYBLUE):
         self.logger.info(self.fix(color, msg))
-        
-    def warn(self, msg, color = YELLOW):
+
+    def info(self, msg, *args, **kwargs):
+        self.logger.info(self.fix(self.SKYBLUE, msg), *args, **kwargs)
+
+    def _warn(self, msg, color = YELLOW):
         self.logger.warn(self.fix(color, msg))
 
-    def error(self, msg, color = RED):
+    def warn(self, msg, *args, **kwargs):
+        self.logger.warn(self.fix(self.YELLOW, msg), *args, **kwargs)
+
+    def _error(self, msg, color = RED):
         self.logger.error(self.fix(color, msg))
         self.logger.error(self.fix(color, 'traceback: [%s]' % traceback.format_exc()))
+
+    def error(self, msg, *args, **kwargs):
+        self.logger.error(self.fix(self.RED, msg), *args, **kwargs)
+        self.logger.error(self.fix(self.RED, 'traceback: [%s]' % traceback.format_exc()))
     
-    def fatal(self, msg, color = PEARL):
+    def _fatal(self, msg, color = PEARL):
         self.logger.critical(self.fix(color, msg))
         self.logger.critical(self.fix(color, 'traceback: [%s]' % traceback.format_exc()))
-        
-log = Logger()
 
+    def fatal(self, msg, *args, **kwargs):
+        self.logger.critical(self.fix(self.PEARL, msg), *args, **kwargs)
+        self.logger.critical(self.fix(self.PEARL, 'traceback: [%s]' % traceback.format_exc()))
+
+log = Logger('pyutils')
+
+if __name__ == '__main__':
+    log = Logger('pyutils')
+
+    for i in xrange(10000):
+        log.debug('debug message %d' % i)
+        log.warn('warn message %d' % i)

@@ -1,0 +1,70 @@
+[loggers]
+keys=root,pyutils
+
+[handlers]
+keys=consoleHandler,FileHandler,RotatingFileHandler,TimedRotatingFileHandler
+
+[formatters]
+keys=simpleFormatter,timedRotatingFormatter
+
+[logger_root]
+level=DEBUG
+handlers=consoleHandler,FileHandler
+
+#Level Numeric value
+#CRITICAL 50
+#ERROR 40
+#WARNING 30
+#INFO 20
+#DEBUG 10
+#NOTSET 0
+
+[logger_pyutils]
+level=INFO
+handlers=consoleHandler,RotatingFileHandler,TimedRotatingFileHandler
+qualname=pyutils
+propagate=0
+
+[handler_consoleHandler]
+class=StreamHandler
+level=DEBUG
+formatter=simpleFormatter
+args=(sys.stdout,)
+
+[handler_FileHandler]
+class=FileHandler
+level=WARNING
+formatter=simpleFormatter
+args=('pyutils.log',)
+
+[handler_RotatingFileHandler]
+class=handlers.RotatingFileHandler
+level=DEBUG
+formatter=simpleFormatter
+args=('rotation.log','a',10485760,5)  # every 10M bytes rotate
+#(filename, writeMode, maxBytes = 2000, backupCount)
+
+
+[handler_TimedRotatingFileHandler]
+class=handlers.TimedRotatingFileHandler
+level=DEBUG
+formatter=timedRotatingFormatter
+args=('timed.log', 'D', 1, 5)  # every 1 Day rotate
+#(filename, when='h', interval=1, backupCount=0, encoding=None, delay=False, utc=False)
+
+#Value Type of interval
+#’S’ Seconds
+#’M’ Minutes
+#’H’ Hours
+#’D’ Days
+#’W’ Week day (0=Monday)
+#’midnight’ Roll over at midnight
+
+[formatter_simpleFormatter]
+format=[%(asctime)s] [%(process)d] [%(name)-8s] [%(levelname)-5s] - %(message)s
+datefmt=%y-%m-%d %H:%M:%S
+
+[formatter_timedRotatingFormatter]
+format=%(asctime)s.%(msecs)d %(name)-12s %(levelname)-8s %(message)s
+datefmt=%y-%m-%d %H:%M:%S
+#datefmt=%y-%m-%d %H:%M:%S %p
