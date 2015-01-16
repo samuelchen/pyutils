@@ -1,5 +1,0 @@
-15-01-08 12:19:40.724 pyutils      INFO     Connecting to %s
-15-01-08 12:23:10.260 pyutils      INFO     Connecting to amqp://guest:guest@localhost:35672/%2F?connection_attempts=3&heartbeat_interval=3600
-15-01-09 11:38:21.651 pyutils      INFO     Connecting to %s
-15-01-09 11:38:53.436 pyutils      INFO     Connecting to %s
-15-01-09 11:45:51.444 pyutils      INFO     Connecting to amqp://guest:guest@localhost:35672/%2F?connection_attempts=3&heartbeat_interval=3600
