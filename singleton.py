@@ -19,7 +19,7 @@ class SingletonBase(object):
     __ref_count = 0
 
     def __new__(cls, *args, **kwargs):
-        if None == cls._instance:
+        if None == cls.__instance:
             cls.__lock.acquire()
             cls.__instance = object.__new__(cls)
             cls.__ref_count += 1
