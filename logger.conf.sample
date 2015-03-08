@@ -8,8 +8,9 @@ keys=consoleHandler,FileHandler,RotatingFileHandler,TimedRotatingFileHandler
 keys=simpleFormatter,timedRotatingFormatter
 
 [logger_root]
-level=DEBUG
-handlers=consoleHandler,FileHandler
+level=NOTSET
+#handlers=consoleHandler,FileHandler
+handlers=consoleHandler
 
 #Level Numeric value
 #CRITICAL 50
@@ -20,14 +21,15 @@ handlers=consoleHandler,FileHandler
 #NOTSET 0
 
 [logger_pyutils]
-level=INFO
-handlers=consoleHandler,RotatingFileHandler,TimedRotatingFileHandler
+level=NOTSET
+#handlers=consoleHandler,RotatingFileHandler,TimedRotatingFileHandler
+handlers=consoleHandler
 qualname=pyutils
 propagate=0
 
 [handler_consoleHandler]
 class=StreamHandler
-level=DEBUG
+level=NOTSET
 formatter=simpleFormatter
 args=(sys.stdout,)
 
@@ -61,7 +63,7 @@ args=('timed.log', 'D', 1, 5)  # every 1 Day rotate
 #’midnight’ Roll over at midnight
 
 [formatter_simpleFormatter]
-format=[%(asctime)s] [%(process)d] [%(name)-8s] [%(levelname)-5s] - %(message)s
+format=[%(asctime)s] [%(process)d] [%(levelname)-8s] [%(name)s] - %(message)s
 datefmt=%y-%m-%d %H:%M:%S
 
 [formatter_timedRotatingFormatter]

@@ -12,7 +12,8 @@ import pika
 from pika import adapters
 import json
 
-from logger import log
+from logger import Logger
+log = Logger(__name__)
 
 
 class TornadoRabbitMQConsumer(object):

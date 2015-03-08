@@ -9,7 +9,8 @@ Created on 1/7/2015
 '''
 
 import threading
-from logger import log
+from logger import Logger
+log = Logger(__name__)
 
 class SingletonBase(object):
 
