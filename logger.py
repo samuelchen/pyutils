@@ -20,6 +20,7 @@ class Logger(object):
     convinient log tools based on python standard logging system
     '''
 
+    BLACK = 0
     RED = 1
     GREEN = 2
     YELLOW = 3
@@ -54,17 +55,17 @@ class Logger(object):
     def trace(self, msg, *args, **kwargs):
         self.logger.log(logging.TRACE, self.fix(self.WHITE, msg), *args, **kwargs)
 
-    def _debug(self, msg, color=GREEN):
+    def _debug(self, msg, color=BLACK):
         self.logger.debug(self.fix(color, msg))
 
     def debug(self, msg, *args, **kwargs):
-        self.logger.debug(self.fix(self.GREEN, msg), *args, **kwargs)
+        self.logger.debug(self.fix(self.BLACK, msg), *args, **kwargs)
 
-    def _info(self, msg, color=SKYBLUE):
+    def _info(self, msg, color=BLUE):
         self.logger.info(self.fix(color, msg))
 
     def info(self, msg, *args, **kwargs):
-        self.logger.info(self.fix(self.SKYBLUE, msg), *args, **kwargs)
+        self.logger.info(self.fix(self.BLUE, msg), *args, **kwargs)
 
     def _warn(self, msg, color=YELLOW):
         self.logger.warn(self.fix(color, msg))
@@ -78,11 +79,11 @@ class Logger(object):
     def error(self, msg, *args, **kwargs):
         self.logger.error(self.fix(self.RED, msg), *args, **kwargs)
 
-    def _fatal(self, msg, color=PEARL):
+    def _critical(self, msg, color=PEARL):
         self.logger.critical(self.fix(color, msg))
         self.logger.critical(self.fix(color, 'traceback: [%s]' % traceback.format_exc()))
 
-    def fatal(self, msg, *args, **kwargs):
+    def critical(self, msg, *args, **kwargs):
         self.logger.critical(self.fix(self.PEARL, msg), *args, **kwargs)
         self.logger.critical(self.fix(self.PEARL, 'traceback: [%s]' % traceback.format_exc()))
 
