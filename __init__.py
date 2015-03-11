@@ -10,11 +10,12 @@ Created on 1/7/2015
 
 from logger import Logger
 from singleton import SingletonBase
-from rabbitmq import RabbitMQPublisher, RabbitMQConsumer
 import strutil
+from kvdb import KVDBWrapper
 
 __all__ = [Logger,
            SingletonBase,
-           RabbitMQPublisher, RabbitMQConsumer,
+           'RabbitMQPublisher', 'RabbitMQConsumer',
            strutil,
+           KVDBWrapper
 ]

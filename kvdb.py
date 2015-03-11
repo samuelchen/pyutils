@@ -11,50 +11,77 @@ Created on 3/8/2015
 from pyutils import Logger
 log = Logger(__name__)
 
-class KVDB(object):
+class KVDBWrapper(object):
     '''
     The key-value storage wrapper. You need to pass-in the required functions as callbacks to use it.
     '''
 
-    def __init__(self, put_callback, get_callback, scan_callback):
+    def __init__(self, kvdb_class, **kwargs):
         '''
         Initialize a KVDB wrapper object.
 
-        :param put_callback: The "put" callback is used to storage a pair of key-value data. Should accept (key, value, meta) arguments
-        :param get_callback: The "get" callback is used to retrieve data by given key. Should accept (key, meta) arguments
-        :param scan_callback: The "scan" callback is used to scan keys. Should accept (pattern, meta) arguments. "pattern" is the wild-mask/regular-expression for "key".
+        :param kvdb_class: The class for wrapped KVDB client. It will be used to initialize an client object. The object must have one or more of the following methods.
+            - "set" method is used to storage a pair of key-value data. Should accept (key, value, meta) arguments
+            - "get" method is used to retrieve data by given key. Should accept (key, meta) arguments
+            - "scan" method is used to scan keys. Should accept (kwargs) arguments.
+            - "scanv" method is used to scan key-values. Should accept (kwargs) arguments.
         :return: Initialized KVDB wrapper object
         '''
 
-        self._cb_put = put_callback
-        self._cb_get = get_callback
-        self._cb_scan = scan_callback
-        assert (put_callback and get_callback and scan_callback)
+        self.client = object.__new__(kvdb_class, **kwargs)
+        self.client.__init__(**kwargs)
+        assert (self.client)
 
+    def info(self):
+        rc = ''
+        try:
+            rc = self.client.info()
+        except Exception, e:
+            log.exception('Fail to get db info.')
+        return rc
 
-    def put(self, key, value, meta=''):
+    def set(self, key, value, **kwags):
         rc = None
         try:
-            rc = self._cb_put(key, value, meta)
+            rc = self.client.set(key, value, **kwags)
         except Exception, e:
-            log.exception('Fail to save data(key="%s") in KVDB.' % key, e)
+            log.exception('Fail to save data in KVDB. (key="%s")' % key)
 
         return rc
 
-    def get(self, key, meta=''):
+    def get(self, key, **kwargs):
         rc = None
         try:
-            rc = self._cb_get(key, meta)
+            rc = self.client.get(key, **kwargs)
         except Exception, e:
-            log.exception('Fail to load data(key="%s") from KVDB.' % key, e)
+            log.exception('Fail to get data from KVDB. (key=%s)' % key)
 
         return rc
 
-    def scan(self, pattern, meta=''):
+    def exist(self, key, **kwargs):
         rc = None
         try:
-            rc = self._cb_scan(pattern, meta)
+            rc = self.client.exist(key, **kwargs)
         except Exception, e:
-            log.exception('Fail to scan data(pattern="%s") from KVDB.' % pattern, e)
+            log.exception('Fail to get data from KVDB. (key=%s)' % key)
+
+        return rc
+
+    def scan(self, cursor, count, **kwargs):
+        rc = None
+        try:
+            rc = self.client.scan(cursor, count, **kwargs)
+        except Exception, e:
+            log.exception('Fail to retrieve keys data from KVDB. (kwargs="%s")' % kwargs)
+
+        return rc
+
+
+    def scanv(self, cursor, count, **kwargs):
+        rc = None
+        try:
+            rc = self.client.scanv(cursor, count, **kwargs)
+        except Exception, e:
+            log.exception('Fail to retrieve key-values data from KVDB. (kwargs="%s")' % kwargs)
 
         return rc

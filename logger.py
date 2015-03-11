@@ -6,6 +6,7 @@ Created on 2014-5-29
 
 @author: Samuel
 '''
+
 import os
 import logging
 import logging.config
@@ -81,18 +82,17 @@ class Logger(object):
 
     def _critical(self, msg, color=PEARL):
         self.logger.critical(self.fix(color, msg))
-        self.logger.critical(self.fix(color, 'traceback: [%s]' % traceback.format_exc()))
 
     def critical(self, msg, *args, **kwargs):
         self.logger.critical(self.fix(self.PEARL, msg), *args, **kwargs)
-        self.logger.critical(self.fix(self.PEARL, 'traceback: [%s]' % traceback.format_exc()))
 
     def _exception(self, msg, color=RED):
-        self.logger.exception(self.fix(color, msg))
-        # self.logger.exception(self.fix(color, 'traceback: [%s]' % traceback.format_exc()))
+        self.logger.error(self.fix(color, msg))
+        self.logger.exception(self.fix(color, 'traceback: [%s]' % traceback.format_exc()))
 
     def exception(self, msg, *args, **kwargs):
-        self.logger.exception(self.fix(self.RED, msg), *args, **kwargs)
+        self.logger.error(self.fix(self.RED, msg), *args, **kwargs)
+        self.logger.exception(self.fix(self.RED, 'traceback: [%s]' % traceback.format_exc()))
 
 
 if __name__ == '__main__':
