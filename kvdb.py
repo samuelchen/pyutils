@@ -58,6 +58,15 @@ class KVDBWrapper(object):
 
         return rc
 
+    def delete(self, key, **kwargs):
+        rc = None
+        try:
+            rc = self.client.delete(key, **kwargs)
+        except Exception, e:
+            log.exception('Fail to delete data from KVDB. (key=%s)' % key)
+
+        return rc
+
     def exist(self, key, **kwargs):
         rc = None
         try:
