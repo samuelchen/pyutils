@@ -1,19 +1,14 @@
-#!/usr/bin/env python
-# coding: utf-8
-__author__ = 'Samuel Chen <samuel.net@gmail.com>'
-
-'''
-rabbitmq module description
-
-Created on 12/15/2014
-'''
-
 import pika
 from pika import adapters
 import json
+import logging
 
-from logger import Logger
-log = Logger(__name__)
+__author__ = 'Samuel Chen <samuel.net@gmail.com>'
+__doc__ = """
+RabbitMQ tools
+"""
+
+log = logging.getLogger(__name__)
 
 
 class TornadoRabbitMQConsumer(object):

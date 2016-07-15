@@ -1,23 +1,21 @@
-#!/usr/bin/env python
-# coding: utf-8
+import logging
+
 __author__ = 'Samuel Chen <samuel.net@gmail.com>'
+__date__ = '2016/7/4 17:05'
+__doc__ = """
+KVDB utilies
+"""
 
-'''
-kvdb module description
+log = logging.getLogger(__name__)
 
-Created on 3/8/2015
-'''
-
-from pyutils import Logger
-log = Logger(__name__)
 
 class KVDBWrapper(object):
-    '''
+    """
     The key-value storage wrapper. You need to pass-in the required functions as callbacks to use it.
-    '''
+    """
 
     def __init__(self, kvdb_class, **kwargs):
-        '''
+        """
         Initialize a KVDB wrapper object.
 
         :param kvdb_class: The class for wrapped KVDB client. It will be used to initialize an client object. The object must have one or more of the following methods.
@@ -26,7 +24,7 @@ class KVDBWrapper(object):
             - "scan" method is used to scan keys. Should accept (kwargs) arguments.
             - "scanv" method is used to scan key-values. Should accept (kwargs) arguments.
         :return: Initialized KVDB wrapper object
-        '''
+        """
 
         self.client = object.__new__(kvdb_class, **kwargs)
         self.client.__init__(**kwargs)
@@ -36,7 +34,7 @@ class KVDBWrapper(object):
         rc = ''
         try:
             rc = self.client.info()
-        except Exception, e:
+        except Exception as e:
             log.exception('Fail to get db info.')
         return rc
 
@@ -44,7 +42,7 @@ class KVDBWrapper(object):
         rc = None
         try:
             rc = self.client.set(key, value, **kwags)
-        except Exception, e:
+        except Exception as e:
             log.exception('Fail to save data in KVDB. (key="%s")' % key)
 
         return rc
@@ -53,7 +51,7 @@ class KVDBWrapper(object):
         rc = None
         try:
             rc = self.client.get(key, **kwargs)
-        except Exception, e:
+        except Exception as e:
             log.exception('Fail to get data from KVDB. (key=%s)' % key)
 
         return rc
@@ -62,7 +60,7 @@ class KVDBWrapper(object):
         rc = None
         try:
             rc = self.client.delete(key, **kwargs)
-        except Exception, e:
+        except Exception as e:
             log.exception('Fail to delete data from KVDB. (key=%s)' % key)
 
         return rc
@@ -71,7 +69,7 @@ class KVDBWrapper(object):
         rc = None
         try:
             rc = self.client.exist(key, **kwargs)
-        except Exception, e:
+        except Exception as e:
             log.exception('Fail to get data from KVDB. (key=%s)' % key)
 
         return rc
@@ -80,17 +78,16 @@ class KVDBWrapper(object):
         rc = None
         try:
             rc = self.client.scan(cursor, count, **kwargs)
-        except Exception, e:
+        except Exception as e:
             log.exception('Fail to retrieve keys data from KVDB. (kwargs="%s")' % kwargs)
 
         return rc
-
 
     def scanv(self, cursor, count, **kwargs):
         rc = None
         try:
             rc = self.client.scanv(cursor, count, **kwargs)
-        except Exception, e:
+        except Exception as e:
             log.exception('Fail to retrieve key-values data from KVDB. (kwargs="%s")' % kwargs)
 
         return rc

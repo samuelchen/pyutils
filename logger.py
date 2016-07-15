@@ -1,25 +1,96 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-'''
-Created on 2014-5-29
-
-@author: Samuel
-'''
-
 import os
 import logging
 import logging.config
 import traceback
+from termcolor import colored
+
+__author__ = 'Samuel Chen <samuel.net@gmail.com>'
+__doc__ = """
+Utilities/Enhancement for python logging.
+"""
 
 logging.TRACE = logging.DEBUG - 5
 logging.addLevelName(logging.TRACE, 'TRACE')
 
 
+class ColorFormatter(logging.Formatter):
+    """
+    A colorful handler for python logging
+
+    ''color reference: https://pypi.python.org/pypi/termcolor
+    'LEVEL': ('fg-color', 'bg-color', ['attr1', 'attr2', ...])''
+
+    ### Color config
+    ::
+    _colors = {
+        'TRACE': ('grey', None, []),
+        'DEBUG': ('grey', None, ['bold']),
+        'INFO': (None, None, []),
+        'WARNING': ('yellow', None, []),
+        'ERROR': ('red', None, []),
+        'CRITICAL': ('red', 'white', []),
+
+    }
+    ::
+
+    ### Dict style log config:
+    ::
+    LOGGING = {
+        ...
+        'formatters': {
+            'colored': {
+                'format': '%(levelname)-7s [%(asctime)s] %(name)-30s [%(lineno)d] %(message)s',
+                '()': 'utils.logger.ColorFormatter',
+                'colors': {
+                    'TRACE': ('grey', None, []),
+                    'DEBUG': ('grey', None, ['bold']),
+                    'INFO': (None, None, []),
+                    'WARNING': ('yellow', None, []),
+                    'ERROR': ('red', None, []),
+                    'CRITICAL': ('red', 'white', []),
+
+                }
+            },
+        },
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'colored'
+            },
+        },
+        'loggers': {
+            'foo': {
+                'handlers': ['console'],
+                'level': 'WARNING',
+            },
+        },
+        ...
+    }
+    ::
+    """
+
+    def __init__(self, fmt=None, datefmt=None, colors=None):
+        self.colors = colors
+        super(ColorFormatter, self).__init__(fmt=fmt, datefmt=datefmt)
+
+    def format(self, record):
+
+        s = super(ColorFormatter, self).format(record)
+
+        lvlname = record.levelname
+        if lvlname in self.colors:
+            fg, bg, attrs = self.colors[lvlname]
+            return colored(s, fg, bg, attrs)
+        else:
+            print('Log %r has no color defined.' % lvlname)
+            return s
+
+
 class Logger(object):
-    '''
-    convinient log tools based on python standard logging system
-    '''
+    """
+    Convenience log tool based on python logging
+    ** Use ColoredFormatter instead of using this **
+    """
 
     BLACK = 0
     RED = 1
