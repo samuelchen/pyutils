@@ -1,4 +1,4 @@
-from collections import Mapping, MutableMapping, Iterable
+from collections import Mapping, MutableMapping, Iterable, OrderedDict
 import threading
 
 __author__ = 'Samuel Chen <samuel.net@gmail.com>'
@@ -127,3 +127,44 @@ class SingletonBase(object):
             cls.__instance.close()
             cls.__instance = None
         cls.__lock.release()
+
+
+class PropertyDict(OrderedDict):
+    """
+    A class based ordered dict and supports dot notation.
+    e.g. Either "obj.name" or "obj['name']" works
+    """
+
+    # def __getitem__(self, key):
+    #     if self.fail_as_none and key not in self.keys():
+    #         return None
+    #     return super(PropertyDict, self).__getitem__(key)
+
+    def __getattr__(self, key):
+        if key in self.keys():
+            return self[key]
+        else:
+            return super(PropertyDict, self).__getattribute__(key)
+
+    def __setattr__(self, key, value):
+        if key in self.keys():
+            return super(PropertyDict, self).__setitem__(key, value)
+        else:
+            return super(PropertyDict, self).__setattr__(key, value)
+
+    def __delattr__(self, key):
+        if key in self.keys():
+            return super(PropertyDict, self).__delitem__(key)
+        else:
+            return super(PropertyDict, self).__delattr__(key)
+
+    # __fail_as_none = False
+    #
+    # @property
+    # def fail_as_none(self):
+    #     return self.__fail_as_none
+    #
+    # @fail_as_none.setter
+    # def fail_as_none(self, value):
+    #     assert value is bool
+    #     self.__fail_as_none = value
