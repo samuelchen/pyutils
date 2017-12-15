@@ -134,4 +134,41 @@ class DBCacheStorage(CacheStorage):
             return None
 
 
+# ----------------------------------
+
+def property_exception(property_name):
+    """
+    Decorator to add a property to Exception class. Add __init__ with property name argument also.
+    :param property_name: property name to add.
+    :return: decorated exception class
+    """
+
+    def rebuild_class(exception_class):
+
+        assert issubclass(exception_class, Exception)
+
+        class _DecoratedException(exception_class):
+            def __init__(self, property_value, *args, **kwargs):
+                super(_DecoratedException, self).__init__(*args, **kwargs)
+                self.__property_value = property_value
+                setattr(self, property_name, property(fget=fget_property))
+
+    # def new__init__(self, property_value, *args, **kwargs):
+    #     super(exception_class, self).__init__(*args, **kwargs)
+    #     setattr(self, '_' + property_name, property_value)
+
+        def fget_property(self):
+            return getattr(self, '_' + property_name)
+
+    # setattr(exception_class, '__init__', new__init__)
+    # setattr(exception_class, property_name, property(fget=fget_property))
+
+        return _DecoratedException
+
+    return rebuild_class
+
+
+# ------------------------------------
+
+
 __all__ = [cached, ]
