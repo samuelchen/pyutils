@@ -10,7 +10,8 @@ Utilities for robust programming.
 log = logging.getLogger(__name__)
 
 
-def retry(func, args=[], kwargs={}, times=3, interval=3, timeout=30):
+def retry(func, args=[], kwargs={}, times=3, interval=3, timeout=30,
+          break_on_exceptions=(), continue_on_exceptions=()):
     """
     Execute a function for "times" with "interval" (retry "times - 1")
     If the func does not raise any exception, we think it executed succefully.
@@ -22,18 +23,28 @@ def retry(func, args=[], kwargs={}, times=3, interval=3, timeout=30):
     :param timeout: [NotImplemented] Timeout for each round executing. (seconds)
     :return: The func return value.
     """
+    assert callable(func)
 
     rc = None
     succeed = False
     count = 1
+    BOE = tuple(break_on_exceptions)
+    COE = tuple(continue_on_exceptions)
     while not succeed and count <= times:
         try:
             rc = func(*args, **kwargs)
             succeed = True
+        except COE as err:
+            log.warn('Continue retrying "%s" on exception %s (%s)' % (func.__name__, type(err), err.message))
+        except BOE as err:
+            log.error('Break retrying "%s" on exception %s (%s)' % (func.__name__, type(err), err.message))
+            break
         except Exception as err:
             log.exception(err)
-            log.info('Retry executing %s ... %d' % (str(func), count))
         count += 1
+        if succeed:
+            break
+        log.info('Retry executing "%s" ... %d' % (func.__name__, count))
         sleep(interval)
 
     return rc

@@ -1,6 +1,6 @@
 import sys
 from termcolor import colored, cprint
-from pyutils import ColorFormatter
+from pyutils.logger import ColorFormatter
 
 __author__ = 'Samuel Chen <samuel.net@gmail.com>'
 __date__ = '2016/7/4 22:58'
